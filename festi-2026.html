@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FESTI 2026 - Festival Musical</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #008080;
+    font-family: Tahoma, 'MS Sans Serif', Arial, sans-serif;
+    font-size: 11px;
+    min-height: 100vh;
+    padding: 4px;
+  }
+
+  .window {
+    background: #d4d0c8;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    box-shadow: 1px 1px 0 #000;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .title-bar {
+    background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+  }
+  .title-bar-left { display: flex; align-items: center; gap: 6px; }
+  .title-bar-btns { display: flex; gap: 2px; }
+  .tb-btn {
+    background: #d4d0c8;
+    border: 1px solid;
+    border-color: #fff #808080 #808080 #fff;
+    width: 16px; height: 14px;
+    font-size: 9px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: #000; font-weight: bold;
+  }
+
+  .menu-bar {
+    background: #d4d0c8;
+    border-bottom: 1px solid #808080;
+    padding: 2px 4px;
+    display: flex;
+    gap: 2px;
+    flex-wrap: wrap;
+  }
+  .menu-item {
+    padding: 2px 8px;
+    cursor: pointer;
+    font-size: 11px;
+    border: 1px solid transparent;
+    color: #000;
+  }
+  .menu-item:hover { border-color: #000080; background: #000080; color: #fff; }
+
+  .toolbar {
+    background: #d4d0c8;
+    border-bottom: 2px solid #808080;
+    padding: 4px 6px;
+    display: flex;
+    gap: 2px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .nav-btn {
+    background: #d4d0c8;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-family: Tahoma, Arial, sans-serif;
+    cursor: pointer;
+    color: #000;
+    white-space: nowrap;
+  }
+  .nav-btn:active { border-color: #808080 #fff #fff #808080; }
+  .nav-btn.active {
+    border-color: #808080 #fff #fff #808080;
+    background: #c0bdb5;
+    font-weight: bold;
+    color: #000080;
+  }
+
+  .address-bar {
+    background: #d4d0c8;
+    border-bottom: 1px solid #808080;
+    padding: 2px 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+  }
+  .addr-label { font-weight: bold; white-space: nowrap; }
+  .addr-input {
+    flex: 1;
+    background: #fff;
+    border: 1px solid;
+    border-color: #808080 #fff #fff #808080;
+    padding: 1px 4px;
+    font-size: 11px;
+    font-family: Tahoma, Arial, sans-serif;
+    color: #000080;
+  }
+
+  .marquee-wrap {
+    background: #fff;
+    border-bottom: 1px solid #808080;
+    border-top: 1px solid #fff;
+    padding: 2px 6px;
+  }
+  marquee { font-size: 11px; color: #000080; font-weight: bold; }
+
+  .content-area {
+    display: flex;
+    min-height: 440px;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 120px;
+    flex-shrink: 0;
+    background: #d4d0c8;
+    border-right: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    padding: 6px 4px;
+  }
+  .sidebar-section { margin-bottom: 10px; }
+  .sidebar-title {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    color: #fff;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    margin-bottom: 2px;
+  }
+  .sidebar-btn {
+    display: block;
+    width: 100%;
+    background: #d4d0c8;
+    border: 1px solid;
+    border-color: #fff #808080 #808080 #fff;
+    padding: 3px 6px;
+    font-size: 10px;
+    font-family: Tahoma, Arial, sans-serif;
+    cursor: pointer;
+    text-align: left;
+    color: #000;
+    margin-bottom: 2px;
+  }
+  .sidebar-btn:hover { background: #000080; color: #fff; border-color: #000080; }
+  .sidebar-btn.active {
+    background: #c0bdb5;
+    border-color: #808080 #fff #fff #808080;
+    font-weight: bold;
+    color: #000080;
+  }
+
+  .counter-box {
+    background: #000;
+    color: #ff6600;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 3px 6px;
+    border: 2px inset #808080;
+    letter-spacing: 3px;
+    display: block;
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  /* MAIN */
+  .main-panel {
+    flex: 1;
+    background: #fff;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .page-header {
+    background: linear-gradient(90deg, #000080 0%, #1084d0 60%, #cc0000 100%);
+    color: #fff;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .page-header-title { font-size: 15px; font-weight: bold; letter-spacing: 1px; text-shadow: 1px 1px 0 #000; }
+  .page-header-sub { font-size: 10px; background: #cc0000; padding: 2px 8px; border: 1px solid #ff6666; }
+
+  /* SECTIONS */
+  .page-section { display: none; }
+  .page-section.active { display: block; }
+  .section-body { padding: 10px 14px; }
+
+  /* BOXES */
+  .inset-box {
+    background: #fff;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    padding: 6px 10px;
+    margin-bottom: 8px;
+  }
+  .inset-box-title {
+    background: #000080;
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 6px;
+    margin: -6px -10px 6px;
+  }
+  .raised-box {
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    background: #d4d0c8;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+  }
+
+  hr.win { border: none; border-top: 1px solid #808080; border-bottom: 1px solid #fff; margin: 6px 0; }
+
+  /* WALL */
+  .wall-post {
+    border-bottom: 1px dashed #808080;
+    padding: 5px 0;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .wall-avatar {
+    width: 28px; height: 28px;
+    border: 1px solid #808080;
+    background: #d4d0c8;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .wall-user { color: #000080; font-weight: bold; text-decoration: underline; cursor: pointer; }
+  .wall-text { color: #000; margin-top: 2px; line-height: 1.5; }
+  .wall-time { color: #808080; font-size: 10px; }
+
+  /* FORM */
+  input[type=text], textarea, select {
+    background: #fff;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    padding: 2px 4px;
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 11px;
+    color: #000;
+  }
+
+  .win-btn {
+    background: #d4d0c8;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    padding: 3px 14px;
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+    color: #000;
+  }
+  .win-btn:active { border-color: #808080 #fff #fff #808080; }
+  .win-btn.primary {
+    background: #000080; color: #fff; font-weight: bold;
+    border-color: #4040c0 #000020 #000020 #4040c0;
+  }
+  .win-btn.primary:active { border-color: #000020 #4040c0 #4040c0 #000020; }
+
+  /* CATEGORIES */
+  .cat-table { width: 100%; border-collapse: collapse; }
+  .cat-table td { padding: 4px 6px; }
+  .cat-row { cursor: pointer; border: 1px solid transparent; }
+  .cat-row:hover { background: #000080; color: #fff; }
+  .cat-row.selected { background: #000080; color: #fff; }
+  .cat-name { font-weight: bold; font-size: 12px; }
+  .cat-desc { font-size: 10px; color: #666; }
+  .cat-row.selected .cat-desc, .cat-row:hover .cat-desc { color: #aaf; }
+
+  /* SUCCESS */
+  .success-box {
+    background: #d4ffd4;
+    border: 2px solid;
+    border-color: #00aa00 #004400 #004400 #00aa00;
+    padding: 8px 12px;
+    display: none;
+    margin-top: 8px;
+    font-size: 11px;
+  }
+
+  /* ORGS */
+  .org-grid { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0; }
+  .org-card {
+    width: 105px;
+    background: #d4d0c8;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    padding: 8px;
+    text-align: center;
+    cursor: default;
+  }
+  .org-card:hover { border-color: #000080 #4040c0 #4040c0 #000080; }
+  .org-pic {
+    width: 56px; height: 56px;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    background: linear-gradient(135deg, #003366, #000080);
+    margin: 0 auto 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+  }
+  .org-name { font-weight: bold; font-size: 11px; color: #000080; }
+  .org-grade { font-size: 10px; color: #666; margin-top: 2px; }
+
+  /* LIVE */
+  .live-screen {
+    background: #000;
+    border: 4px solid;
+    border-color: #808080 #fff #fff #808080;
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 4/3;
+    margin: 0 auto 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .live-screen::before {
+    content:'';
+    position:absolute; inset:0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,255,0,0.03) 3px, rgba(0,255,0,0.03) 4px);
+    pointer-events:none;
+  }
+  .live-blink { animation: blink 1s step-end infinite; color: #ff0000; font-weight:bold; font-size:13px; }
+  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+  .event-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .event-table th { background: #000080; color: #fff; padding: 3px 8px; text-align: left; }
+  .event-table td { padding: 4px 8px; border-bottom: 1px solid #d4d0c8; }
+  .event-table tr:hover td { background: #000080; color: #fff; }
+
+  /* GALLERY */
+  .gallery-year-tabs { display: flex; gap: 0; border-bottom: 2px solid #808080; margin-bottom: 10px; }
+  .g-tab {
+    background: #d4d0c8;
+    border: 2px solid;
+    border-color: #fff #808080 transparent #fff;
+    padding: 3px 16px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: -2px;
+    color: #000;
+  }
+  .g-tab.active { background: #fff; border-bottom-color: #fff; color: #000080; }
+
+  .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 6px; }
+  .gallery-thumb {
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    background: #d4d0c8;
+    aspect-ratio: 4/3;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    font-size: 1.8rem;
+    cursor: pointer;
+  }
+  .gallery-thumb:hover { border-color: #000080; background: #c8c8ff; }
+  .gallery-thumb span { font-size: 9px; color: #000080; margin-top: 4px; text-align: center; font-weight: bold; padding: 0 4px; }
+
+  /* STATUS */
+  .status-bar {
+    background: #d4d0c8;
+    border-top: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    padding: 2px 6px;
+    display: flex;
+    gap: 4px;
+    font-size: 10px;
+  }
+  .status-item {
+    border: 1px solid;
+    border-color: #808080 #fff #fff #808080;
+    padding: 1px 6px;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .new-badge {
+    background: #ff0000;
+    color: #fff;
+    font-size: 8px;
+    font-weight: bold;
+    padding: 1px 3px;
+    margin-left: 3px;
+    animation: blink 1s step-end infinite;
+  }
+
+  /* PROFILE */
+  .profile-pic {
+    width: 90px; height: 90px;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    background: linear-gradient(135deg, #003366, #000080);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.8rem;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 580px) {
+    .sidebar { width: 90px; }
+    .sidebar-btn { font-size: 9px; padding: 2px 3px; }
+    .org-card { width: 86px; }
+    .org-pic { width: 46px; height: 46px; font-size: 1.3rem; }
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+    .page-header-title { font-size: 12px; }
+    .nav-btn { font-size: 10px; padding: 3px 7px; }
+  }
+  @media (max-width: 400px) {
+    .sidebar { display: none; }
+  }
+
+  ::-webkit-scrollbar { width: 16px; }
+  ::-webkit-scrollbar-track { background: #d4d0c8; }
+  ::-webkit-scrollbar-thumb { background: #d4d0c8; border: 2px solid; border-color: #fff #808080 #808080 #fff; }
+</style>
+</head>
+<body>
+
+<div class="window">
+
+  <!-- Title Bar -->
+  <div class="title-bar">
+    <div class="title-bar-left">
+      <span>🎸</span>
+      <span>FESTI 2026 — Festival Musical — Microsoft Internet Explorer</span>
+    </div>
+    <div class="title-bar-btns">
+      <div class="tb-btn">_</div>
+      <div class="tb-btn">□</div>
+      <div class="tb-btn" style="color:#cc0000;">✕</div>
+    </div>
+  </div>
+
+  <!-- Menu Bar -->
+  <div class="menu-bar">
+    <span class="menu-item">Archivo</span>
+    <span class="menu-item">Edición</span>
+    <span class="menu-item">Ver</span>
+    <span class="menu-item">Favoritos</span>
+    <span class="menu-item">Herramientas</span>
+    <span class="menu-item">Ayuda</span>
+  </div>
+
+  <!-- Nav Toolbar -->
+  <div class="toolbar">
+    <button class="nav-btn active" onclick="showSection('inicio',this)">🏠 Inicio</button>
+    <button class="nav-btn" onclick="showSection('postulaciones',this)">📝 ¿Cómo me postulo?</button>
+    <button class="nav-btn" onclick="showSection('organizadores',this)">👥 Organizadores</button>
+    <button class="nav-btn" onclick="showSection('vivo',this)">📺 En Vivo <span class="new-badge">NEW</span></button>
+    <button class="nav-btn" onclick="showSection('galeria',this)">🖼 Galería</button>
+  </div>
+
+  <!-- Address -->
+  <div class="address-bar">
+    <span class="addr-label">Dirección:</span>
+    <input type="text" class="addr-input" id="addressBar" value="http://www.festi2026.edu.ar/inicio.htm" readonly>
+    <button class="win-btn" style="padding:2px 10px;">Ir</button>
+  </div>
+
+  <!-- Marquee -->
+  <div class="marquee-wrap">
+    <marquee>🎸 ¡Bienvenidos al FESTI 2026! 🎵 Festival Musical del Colegio 🎤 31 de Octubre 2026 🥁 ¡Postulate ya! 🎹 ¡No te lo podés perder! &nbsp;&nbsp;&nbsp;</marquee>
+  </div>
+
+  <!-- Content -->
+  <div class="content-area">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">NAVEGACIÓN</div>
+        <button class="sidebar-btn active" onclick="showSection('inicio',null,this)">🏠 Inicio</button>
+        <button class="sidebar-btn" onclick="showSection('postulaciones',null,this)">📝 Postularse</button>
+        <button class="sidebar-btn" onclick="showSection('organizadores',null,this)">👥 Organiz.</button>
+        <button class="sidebar-btn" onclick="showSection('vivo',null,this)">📺 En Vivo</button>
+        <button class="sidebar-btn" onclick="showSection('galeria',null,this)">🖼 Galería</button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-title">VISITANTES</div>
+        <div style="padding:4px 2px;">
+          <div style="font-size:9px;color:#000080;margin-bottom:2px;">Contador:</div>
+          <span class="counter-box" id="counter">004726</span>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-title">INFO</div>
+        <div style="padding:4px 6px;font-size:10px;color:#000080;line-height:1.8;">
+          📅 31/10/2026<br>
+          🕗 7:30 / 10:30<br>
+          🕑 13:30<br>
+          📍 Colegio
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Panel -->
+    <div class="main-panel">
+
+      <div class="page-header">
+        <div class="page-header-title">🎸 FESTI 2026 — Festival Musical</div>
+        <div class="page-header-sub">31 de Octubre 2026</div>
+      </div>
+
+      <!-- ══ INICIO ══ -->
+      <div id="sec-inicio" class="page-section active">
+        <div class="section-body">
+
+          <table style="width:100%;border-collapse:collapse;">
+            <tr>
+              <td style="width:110px;vertical-align:top;padding-right:10px;">
+                <div class="profile-pic">🎸</div>
+                <div style="text-align:center;margin-top:4px;">
+                  <div style="font-size:10px;color:#000080;font-weight:bold;">FESTI 2026</div>
+                  <div style="font-size:9px;color:#666;">Festival Musical</div>
+                </div>
+              </td>
+              <td style="vertical-align:top;">
+                <div class="inset-box">
+                  <div class="inset-box-title">🎵 Bienvenidos al FESTI 2026</div>
+                  <p style="line-height:1.8;color:#000080;font-size:12px;font-weight:bold;">¡El festival musical más esperado del año ya está aquí!</p>
+                  <p style="line-height:1.8;margin-top:4px;">
+                    El FESTI 2026 es el evento musical organizado por y para los estudiantes del colegio. 
+                    Música, danza, bandas en vivo y mucho más. ¡No te lo podés perder!
+                  </p>
+                </div>
+                <div class="raised-box" style="display:flex;gap:16px;flex-wrap:wrap;">
+                  <div><div style="font-size:9px;color:#808080;">📅 FECHA</div><div style="font-weight:bold;color:#cc0000;">31 Oct 2026</div></div>
+                  <div style="width:1px;background:#808080;"></div>
+                  <div><div style="font-size:9px;color:#808080;">🕗 HORARIOS</div><div style="font-weight:bold;color:#000080;">7:30 / 10:30 / 13:30</div></div>
+                  <div style="width:1px;background:#808080;"></div>
+                  <div><div style="font-size:9px;color:#808080;">📍 LUGAR</div><div style="font-weight:bold;">Colegio</div></div>
+                </div>
+              </td>
+            </tr>
+          </table>
+
+          <hr class="win">
+
+          <table style="width:100%;border-collapse:collapse;">
+            <tr>
+              <td style="width:50%;vertical-align:top;padding-right:6px;">
+                <div class="inset-box">
+                  <div class="inset-box-title">📋 ¿Qué hay en el Festi?</div>
+                  <ul style="padding-left:16px;line-height:2.1;">
+                    <li>🎤 Cantantes solistas</li>
+                    <li>🎸 Bandas en vivo</li>
+                    <li>💃 Baile y danza</li>
+                    <li>🤝 Voluntariado</li>
+                    <li>📺 Transmisión en vivo</li>
+                  </ul>
+                </div>
+              </td>
+              <td style="width:50%;vertical-align:top;padding-left:6px;">
+                <div class="inset-box">
+                  <div class="inset-box-title">✉ Escribí en el muro</div>
+                  <label style="display:block;margin-bottom:2px;">Tu nombre:</label>
+                  <input type="text" id="wallName" style="width:100%;margin-bottom:4px;">
+                  <label style="display:block;margin-bottom:2px;">Mensaje:</label>
+                  <textarea id="wallMsg" rows="3" style="width:100%;margin-bottom:5px;resize:vertical;"></textarea>
+                  <button class="win-btn" onclick="postWall()">Publicar mensaje</button>
+                </div>
+              </td>
+            </tr>
+          </table>
+
+          <div class="inset-box">
+            <div class="inset-box-title">💬 Muro del Festi</div>
+            <div id="wallFeed">
+              <div class="wall-post">
+                <div class="wall-avatar">😊</div>
+                <div>
+                  <div><span class="wall-user">Rocío_99</span> <span class="wall-time">hace 2 días</span></div>
+                  <div class="wall-text">¡¡El año pasado estuvo buenísimo!! Ya quiero que llegue el 31 🎸🎤</div>
+                </div>
+              </div>
+              <div class="wall-post">
+                <div class="wall-avatar">🎵</div>
+                <div>
+                  <div><span class="wall-user">profe_musica</span> <span class="wall-time">hace 3 días</span></div>
+                  <div class="wall-text">¡Este año se viene con todo! Felicitaciones a todos los organizadores.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══ POSTULACIONES ══ -->
+      <div id="sec-postulaciones" class="page-section">
+        <div class="section-body">
+
+          <div class="inset-box">
+            <div class="inset-box-title">📝 ¡Quiero ser parte del Festi 2026!</div>
+            <p style="line-height:1.8;">¿Estás listo para vivir la experiencia Festi? Completá el formulario y sumate al festival.</p>
+          </div>
+
+          <div class="raised-box">
+            <div style="font-weight:bold;margin-bottom:8px;color:#000080;">👤 Tus datos:</div>
+            <table style="border-collapse:collapse;font-size:11px;width:100%;">
+              <tr>
+                <td style="padding:3px 8px 3px 0;white-space:nowrap;"><label>Nombre completo:</label></td>
+                <td><input type="text" id="pNombre" style="width:100%;max-width:240px;"></td>
+              </tr>
+              <tr>
+                <td style="padding:3px 8px 3px 0;"><label>Curso / División:</label></td>
+                <td><input type="text" id="pCurso" style="width:100%;max-width:240px;"></td>
+              </tr>
+            </table>
+
+            <hr class="win">
+
+            <div style="font-weight:bold;margin-bottom:8px;color:#000080;">🎵 Elegí tu categoría:</div>
+
+            <table class="cat-table">
+              <tr class="cat-row" onclick="selectCat(this,'Bailar')">
+                <td style="width:36px;text-align:center;font-size:1.3rem;">💃</td>
+                <td><div class="cat-name">BAILAR</div><div class="cat-desc">Coreografías, danza moderna, folklore</div></td>
+                <td style="width:24px;text-align:center;"><input type="radio" name="cat" value="bailar"></td>
+              </tr>
+              <tr class="cat-row" onclick="selectCat(this,'Cantar')">
+                <td style="text-align:center;font-size:1.3rem;">🎤</td>
+                <td><div class="cat-name">CANTAR</div><div class="cat-desc">Voces solistas o grupales</div></td>
+                <td style="text-align:center;"><input type="radio" name="cat" value="cantar"></td>
+              </tr>
+              <tr class="cat-row" onclick="selectCat(this,'Banda')">
+                <td style="text-align:center;font-size:1.3rem;">🎸</td>
+                <td><div class="cat-name">BANDA</div><div class="cat-desc">Grupos musicales con instrumentos</div></td>
+                <td style="text-align:center;"><input type="radio" name="cat" value="banda"></td>
+              </tr>
+              <tr class="cat-row" onclick="selectCat(this,'Ayudar a Bandas')">
+                <td style="text-align:center;font-size:1.3rem;">🤝</td>
+                <td><div class="cat-name">AYUDAR A BANDAS</div><div class="cat-desc">Técnico de sonido, utilería, asistencia</div></td>
+                <td style="text-align:center;"><input type="radio" name="cat" value="ayudar"></td>
+              </tr>
+            </table>
+
+            <hr class="win">
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="win-btn primary" onclick="submitPost()">¡Quiero postularme! 🚀</button>
+              <button class="win-btn" onclick="resetPost()">Limpiar</button>
+            </div>
+
+            <div class="success-box" id="successBox">
+              <strong>✅ ¡Postulación enviada con éxito!</strong><br>
+              <span id="successMsg"></span><br>
+              Nos pondremos en contacto pronto. ¡Gracias por ser parte del Festi 2026!
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══ ORGANIZADORES ══ -->
+      <div id="sec-organizadores" class="page-section">
+        <div class="section-body">
+
+          <div class="inset-box">
+            <div class="inset-box-title">👥 Organizadores del Festi 2026</div>
+            <p style="line-height:1.8;">
+              Conocé al equipo detrás del Festi. Este increíble evento es posible gracias a la pasión y dedicación de estos estudiantes.<br>
+              Cualquier duda sobre la organización podés consultarla con ellos.
+            </p>
+          </div>
+
+          <div class="org-grid">
+            <div class="org-card"><div class="org-pic">🎵</div><div class="org-name">MENGANO</div><div class="org-grade">5A-SyH TT</div></div>
+            <div class="org-card"><div class="org-pic">🎶</div><div class="org-name">FULANO</div><div class="org-grade">5A-SyH TT</div></div>
+            <div class="org-card"><div class="org-pic">🎸</div><div class="org-name">FULANO</div><div class="org-grade">5A-SyH TT</div></div>
+            <div class="org-card"><div class="org-pic">🥁</div><div class="org-name">MENGANO</div><div class="org-grade">5A-EyA TM</div></div>
+            <div class="org-card"><div class="org-pic">🎹</div><div class="org-name">FULANO</div><div class="org-grade">5A-EyA TM</div></div>
+            <div class="org-card" style="border-color:#000080 #4040a0 #4040a0 #000080;background:#e8e8ff;">
+              <div class="org-pic" style="background:linear-gradient(135deg,#000080,#4040c0);">⭐</div>
+              <div class="org-name" style="color:#cc0000;">SANTINO CIRACI</div>
+              <div class="org-grade" style="color:#000080;font-weight:bold;">5-SyH TT</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══ EN VIVO ══ -->
+      <div id="sec-vivo" class="page-section">
+        <div class="section-body">
+
+          <div class="inset-box">
+            <div class="inset-box-title">📺 ¡Ahora en Vivo!</div>
+            <p>Seguí el festival en tiempo real desde acá el día del evento.</p>
+          </div>
+
+          <div class="live-screen">
+            <div style="font-size:3rem;position:relative;z-index:1;">📺</div>
+            <div class="live-blink" style="position:relative;z-index:1;">● SIN SEÑAL</div>
+            <div style="font-size:10px;letter-spacing:2px;margin-top:10px;position:relative;z-index:1;line-height:1.8;">
+              TRANSMISIÓN DISPONIBLE<br>EL 31 DE OCTUBRE 2026<br><br>
+              <span style="color:#ffff00;">C:\FESTI2026\LIVE.EXE</span>
+            </div>
+          </div>
+
+          <div class="inset-box">
+            <div class="inset-box-title">📅 Próximos Eventos en Vivo</div>
+            <table class="event-table">
+              <tr><th>Hora</th><th>Evento</th><th>Fecha</th><th>Estado</th></tr>
+              <tr>
+                <td><strong>7:30 hs</strong></td>
+                <td>🎵 Festi TM — Apertura</td>
+                <td>31/10/2026</td>
+                <td style="color:#808080;">⏳ Próximamente</td>
+              </tr>
+              <tr>
+                <td><strong>10:30 hs</strong></td>
+                <td>🎸 Festi TM — Segunda Ronda</td>
+                <td>31/10/2026</td>
+                <td style="color:#808080;">⏳ Próximamente</td>
+              </tr>
+              <tr>
+                <td><strong>13:30 hs</strong></td>
+                <td>🎤 Festi TT — Turno Tarde</td>
+                <td>31/10/2026</td>
+                <td style="color:#808080;">⏳ Próximamente</td>
+              </tr>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══ GALERÍA ══ -->
+      <div id="sec-galeria" class="page-section">
+        <div class="section-body">
+
+          <div class="inset-box">
+            <div class="inset-box-title">🖼 Galería — FESTI</div>
+            <p>Los mejores momentos de cada edición.</p>
+          </div>
+
+          <div class="gallery-year-tabs">
+            <button class="g-tab" onclick="switchGallery('2024',this)">📁 2024</button>
+            <button class="g-tab active" onclick="switchGallery('2025',this)">📁 2025</button>
+          </div>
+
+          <div class="gallery-grid" id="galleryGrid"></div>
+
+          <div style="display:flex;justify-content:center;gap:6px;margin-top:10px;">
+            <button class="win-btn">◀ Anterior</button>
+            <button class="win-btn" onclick="refreshGallery()">↻ Actualizar</button>
+            <button class="win-btn">Siguiente ▶</button>
+          </div>
+
+          <div style="text-align:center;padding:16px;color:#808080;font-size:10px;margin-top:8px;">
+            <span style="font-size:2rem;display:block;margin-bottom:6px;">🚧</span>
+            Las fotos del Festi 2026 estarán disponibles después del evento.<br>¡Volvé el 31 de Octubre!
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /main-panel -->
+  </div><!-- /content-area -->
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div class="status-item" id="statusMsg">Listo</div>
+    <div class="status-item" style="flex:0 0 auto;">🌐 Internet</div>
+    <div class="status-item" style="flex:0 0 auto;" id="clockBar">--:--</div>
+  </div>
+
+</div>
+
+<script>
+  const sections = ['inicio','postulaciones','organizadores','vivo','galeria'];
+  const addresses = {
+    inicio:        'http://www.festi2026.edu.ar/inicio.htm',
+    postulaciones: 'http://www.festi2026.edu.ar/postulate.htm',
+    organizadores: 'http://www.festi2026.edu.ar/equipo.htm',
+    vivo:          'http://www.festi2026.edu.ar/live.htm',
+    galeria:       'http://www.festi2026.edu.ar/galeria.htm'
+  };
+
+  function showSection(id, toolbarBtn, sidebarBtn) {
+    sections.forEach(s => document.getElementById('sec-'+s).classList.remove('active'));
+    document.getElementById('sec-'+id).classList.add('active');
+
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    if (toolbarBtn) {
+      toolbarBtn.classList.add('active');
+    } else {
+      const idx = sections.indexOf(id);
+      const btns = document.querySelectorAll('.nav-btn');
+      if (btns[idx]) btns[idx].classList.add('active');
+    }
+
+    document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+    if (sidebarBtn) {
+      sidebarBtn.classList.add('active');
+    } else {
+      const idx = sections.indexOf(id);
+      const sbtns = document.querySelectorAll('.sidebar-btn');
+      if (sbtns[idx]) sbtns[idx].classList.add('active');
+    }
+
+    document.getElementById('addressBar').value = addresses[id];
+    document.getElementById('statusMsg').textContent = 'Listo — ' + addresses[id];
+  }
+
+  // WALL
+  function postWall() {
+    const name = document.getElementById('wallName').value.trim();
+    const msg  = document.getElementById('wallMsg').value.trim();
+    if (!name || !msg) { alert('Por favor completá tu nombre y mensaje.'); return; }
+    const icons = ['😊','🎸','🎵','🎤','💃','🥁'];
+    const icon = icons[Math.floor(Math.random()*icons.length)];
+    const post = document.createElement('div');
+    post.className = 'wall-post';
+    post.innerHTML = `<div class="wall-avatar">${icon}</div><div><div><span class="wall-user">${name}</span> <span class="wall-time">justo ahora</span></div><div class="wall-text">${msg}</div></div>`;
+    const feed = document.getElementById('wallFeed');
+    feed.insertBefore(post, feed.firstChild);
+    document.getElementById('wallName').value = '';
+    document.getElementById('wallMsg').value = '';
+  }
+
+  // POSTULACIÓN
+  let selectedCat = null;
+  function selectCat(row, cat) {
+    document.querySelectorAll('.cat-row').forEach(r => r.classList.remove('selected'));
+    row.classList.add('selected');
+    selectedCat = cat;
+    const r = row.querySelector('input[type=radio]');
+    if (r) r.checked = true;
+  }
+  function submitPost() {
+    const nombre = document.getElementById('pNombre').value.trim();
+    const curso  = document.getElementById('pCurso').value.trim();
+    if (!nombre) { alert('Ingresá tu nombre completo.'); return; }
+    if (!curso)  { alert('Ingresá tu curso/división.'); return; }
+    if (!selectedCat) { alert('Elegí una categoría.'); return; }
+    const box = document.getElementById('successBox');
+    document.getElementById('successMsg').textContent = nombre+' ('+curso+') — Categoría: '+selectedCat;
+    box.style.display = 'block';
+    box.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+  function resetPost() {
+    document.getElementById('pNombre').value='';
+    document.getElementById('pCurso').value='';
+    document.querySelectorAll('.cat-row').forEach(r=>r.classList.remove('selected'));
+    document.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false);
+    selectedCat=null;
+    document.getElementById('successBox').style.display='none';
+  }
+
+  // GALLERY
+  const galleryData = {
+    '2024':[{icon:'🎸',label:'ROCK EN EL PATIO'},{icon:'🎤',label:'CANTANTES'},{icon:'💃',label:'BAILE GRUPAL'},{icon:'🥁',label:'PERCUSIÓN'},{icon:'🎵',label:'BANDA PRINCIPAL'},{icon:'🎹',label:'PIANO SOLO'}],
+    '2025':[{icon:'🎸',label:'APERTURA 2025'},{icon:'🎤',label:'VOCES DEL FESTI'},{icon:'💃',label:'FLASH MOB'},{icon:'🎺',label:'JAZZ FUSIÓN'},{icon:'🎵',label:'GRAN FINAL'},{icon:'⭐',label:'CIERRE ÉPICO'}]
+  };
+  let currentYear='2025';
+  function renderGallery(year){
+    const grid=document.getElementById('galleryGrid');
+    grid.innerHTML='';
+    galleryData[year].forEach(item=>{
+      const d=document.createElement('div');
+      d.className='gallery-thumb';
+      d.innerHTML=item.icon+'<span>'+item.label+'</span>';
+      grid.appendChild(d);
+    });
+  }
+  function switchGallery(year,btn){
+    currentYear=year;
+    document.querySelectorAll('.g-tab').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    renderGallery(year);
+  }
+  function refreshGallery(){renderGallery(currentYear);}
+  renderGallery('2025');
+
+  // CLOCK
+  function updateClock(){
+    const n=new Date();
+    document.getElementById('clockBar').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  }
+  updateClock(); setInterval(updateClock,30000);
+
+  // COUNTER
+  let cnt=4726;
+  setInterval(()=>{if(Math.random()<0.3){cnt++;document.getElementById('counter').textContent=String(cnt).padStart(6,'0');}},9000);
+</script>
+</body>
+</html>
